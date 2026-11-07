@@ -1,0 +1,14 @@
+node_modules
+dist
+.env
+.env.local
+*.xlsx
+.playwright-mcp
+supabase/.temp
+supabase/.branches
+
+# Local Netlify folder
+.netlify
+
+# Datos personales de los miembros
+supabase/seed.sql
