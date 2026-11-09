@@ -39,7 +39,7 @@ export default function SongsPage() {
     <>
       <PageHeader
         title="Canciones"
-        subtitle="Toca una canción para escucharla en YouTube"
+        subtitle="Escúchala en YouTube o Spotify, o abre su letra y acordes"
         icon={<Music />}
         actions={
           isAdmin &&
@@ -79,7 +79,7 @@ export default function SongsPage() {
           {list.length === 0 ? (
             <Empty icon={<Music size={36} />}>No se encontraron canciones.</Empty>
           ) : (
-            <div className="grid gap-2 md:grid-cols-2">
+            <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
               {list.map((s) => (
                 <SongCard
                   key={s.id}
@@ -118,6 +118,9 @@ export function SongForm({ draft, onClose, onSaved }: { draft: Partial<Song>; on
     variant_key: draft.variant_key ?? '',
     genre: draft.genre ?? '',
     youtube_url: draft.youtube_url ?? '',
+    spotify_url: draft.spotify_url ?? '',
+    lyrics_url: draft.lyrics_url ?? '',
+    chords_url: draft.chords_url ?? '',
     track_url: draft.track_url ?? '',
   })
   const [saving, setSaving] = useState(false)
@@ -171,6 +174,16 @@ export function SongForm({ draft, onClose, onSaved }: { draft: Partial<Song>; on
         <Field label="Enlace de YouTube" className="sm:col-span-2">
           <input className="input" type="url" value={f.youtube_url} onChange={set('youtube_url')} placeholder="https://www.youtube.com/watch?v=…" />
         </Field>
+        <Field label="Enlace de Spotify" className="sm:col-span-2">
+          <input className="input" type="url" value={f.spotify_url} onChange={set('spotify_url')} placeholder="https://open.spotify.com/track/…" />
+        </Field>
+        <Field label="Enlace de la letra">
+          <input className="input" type="url" value={f.lyrics_url} onChange={set('lyrics_url')} placeholder="Opcional" />
+        </Field>
+        <Field label="Enlace de los acordes">
+          <input className="input" type="url" value={f.chords_url} onChange={set('chords_url')} placeholder="Ej: lacuerda.net, cifraclub…" />
+        </Field>
+        <p className="-mt-2 text-xs text-mist/60 sm:col-span-2">Si dejas un enlace vacío, el botón buscará la canción automáticamente.</p>
         <Field label="Enlace de la pista (Drive)" className="sm:col-span-2">
           <input className="input" type="url" value={f.track_url} onChange={set('track_url')} placeholder="Opcional" />
         </Field>

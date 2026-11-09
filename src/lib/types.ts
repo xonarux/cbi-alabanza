@@ -69,6 +69,9 @@ export interface Song {
   variant_key: string | null
   genre: string | null
   youtube_url: string | null
+  spotify_url: string | null
+  lyrics_url: string | null
+  chords_url: string | null
   track_url: string | null
 }
 

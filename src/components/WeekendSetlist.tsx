@@ -8,7 +8,7 @@ import type { Setlist, SetlistSong, Song } from '../lib/types'
 import { cx, fmt, isPast, nextSaturdayISO } from '../lib/utils'
 import { buildWhatsApp, DEFAULT_LINE, DEFAULT_TEMPLATE } from '../lib/whatsapp'
 import { DeleteButton, Empty, Field, FormActions, Modal, Spinner } from './ui'
-import { SongInfo, SongThumb } from './SongCard'
+import { SongInfo, SongLinks, SongThumb } from './SongCard'
 
 type Item = SetlistSong & { song: Song }
 
@@ -199,16 +199,16 @@ function SetlistRow({ item, index, total, isAdmin, onMove, onChanged }: { item: 
     }
   }
   return (
-    <div className="glass group p-2.5">
+    <div className="glass group min-w-0 p-2.5">
       <div className="flex items-center gap-3">
         <div className="w-6 text-center text-lg font-extrabold text-gold/70">{index + 1}</div>
-        <button className="flex min-w-0 flex-1 items-center gap-3 text-left" onClick={() => item.song.youtube_url && window.open(item.song.youtube_url, '_blank', 'noopener')}>
+        <div className="flex min-w-0 flex-1 items-center gap-3">
           <SongThumb song={item.song} className="hidden h-14 w-20 sm:block" />
           <div className="min-w-0 flex-1">
             <SongInfo song={item.song} keyOverride={item.key} />
             {item.lead && <div className="mt-1 text-xs text-gold-light">🎤 Dirige: {item.lead}</div>}
           </div>
-        </button>
+        </div>
         {item.song.track_url && (
           <a href={item.song.track_url} target="_blank" rel="noopener" className="btn-icon text-gold" title="Pista">
             🎧
@@ -233,6 +233,7 @@ function SetlistRow({ item, index, total, isAdmin, onMove, onChanged }: { item: 
           </div>
         )}
       </div>
+      <SongLinks song={item.song} className="mt-2.5" />
       {editing && (
         <div className="mt-3 grid gap-2 border-t border-white/5 pt-3 sm:grid-cols-[1fr_2fr_auto]">
           <input className="input" placeholder="Tono" value={key} onChange={(e) => setKey(e.target.value)} />
