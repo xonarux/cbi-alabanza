@@ -7,6 +7,7 @@ import { supabase } from '../lib/supabase'
 import type { Song, SongCategory } from '../lib/types'
 import { DeleteButton, Empty, Field, FormActions, Modal, PageHeader, Spinner, Tabs } from '../components/ui'
 import SongCard from '../components/SongCard'
+import { LyricsEditor } from '../components/Lyrics'
 import WeekendSetlist from '../components/WeekendSetlist'
 
 type Tab = SongCategory | 'finde'
@@ -120,6 +121,7 @@ export function SongForm({ draft, onClose, onSaved }: { draft: Partial<Song>; on
     youtube_url: draft.youtube_url ?? '',
     spotify_url: draft.spotify_url ?? '',
     lyrics_url: draft.lyrics_url ?? '',
+    lyrics: draft.lyrics ?? '',
     chords_url: draft.chords_url ?? '',
     track_url: draft.track_url ?? '',
   })
@@ -187,6 +189,10 @@ export function SongForm({ draft, onClose, onSaved }: { draft: Partial<Song>; on
         <Field label="Enlace de la pista (Drive)" className="sm:col-span-2">
           <input className="input" type="url" value={f.track_url} onChange={set('track_url')} placeholder="Opcional" />
         </Field>
+        <div className="sm:col-span-2">
+          <span className="label">Letra</span>
+          <LyricsEditor value={f.lyrics} onChange={(v) => setF({ ...f, lyrics: v })} />
+        </div>
         <div className="sm:col-span-2">
           <FormActions onCancel={onClose} saving={saving} />
         </div>

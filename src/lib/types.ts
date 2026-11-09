@@ -71,6 +71,7 @@ export interface Song {
   youtube_url: string | null
   spotify_url: string | null
   lyrics_url: string | null
+  lyrics: string | null
   chords_url: string | null
   track_url: string | null
 }

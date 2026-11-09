@@ -1,4 +1,5 @@
-import type { ReactNode } from 'react'
+import { useState, type ReactNode } from 'react'
+import { LyricsModal } from './Lyrics'
 import { AudioLines, FileText, Guitar, Headphones, Music2, Play } from 'lucide-react'
 import type { Song } from '../lib/types'
 import { youtubeId } from '../lib/utils'
@@ -79,22 +80,32 @@ export function songLinks(song: Song) {
   ]
 }
 
-export function SongLinks({ song, className = '' }: { song: Song; className?: string }) {
+export function SongLinks({ song, keyOverride, className = '' }: { song: Song; keyOverride?: string | null; className?: string }) {
+  const [lyricsOpen, setLyricsOpen] = useState(false)
+  const btn = 'flex min-w-0 items-center justify-center gap-1 rounded-lg border border-white/10 bg-white/5 px-1 py-1.5 text-xs font-semibold text-mist transition'
   return (
     <div className={`grid grid-cols-4 gap-1.5 ${className}`}>
-      {songLinks(song).map((l) => (
-        <a
-          key={l.key}
-          href={l.href}
-          target="_blank"
-          rel="noopener"
-          title={l.saved ? `${l.label}: abrir enlace` : `${l.label}: buscar (sin enlace guardado)`}
-          className={`flex min-w-0 items-center justify-center gap-1 rounded-lg border border-white/10 bg-white/5 px-1 py-1.5 text-xs font-semibold text-mist transition ${l.tone} ${l.saved ? '' : 'opacity-60'}`}
-        >
-          {l.icon}
-          <span className="truncate">{l.label}</span>
-        </a>
-      ))}
+      {songLinks(song).map((l) =>
+        l.key === 'letra' && song.lyrics ? (
+          <button key={l.key} type="button" onClick={() => setLyricsOpen(true)} title="Letra: ver en la app" className={`${btn} ${l.tone} border-sky-400/30 text-sky-200`}>
+            {l.icon}
+            <span className="truncate">{l.label}</span>
+          </button>
+        ) : (
+          <a
+            key={l.key}
+            href={l.href}
+            target="_blank"
+            rel="noopener"
+            title={l.saved ? `${l.label}: abrir enlace` : `${l.label}: buscar (sin enlace guardado)`}
+            className={`${btn} ${l.tone} ${l.saved ? '' : 'opacity-60'}`}
+          >
+            {l.icon}
+            <span className="truncate">{l.label}</span>
+          </a>
+        ),
+      )}
+      {lyricsOpen && <LyricsModal song={song} keyOverride={keyOverride} onClose={() => setLyricsOpen(false)} />}
     </div>
   )
 }

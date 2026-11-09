@@ -233,7 +233,7 @@ function SetlistRow({ item, index, total, isAdmin, onMove, onChanged }: { item: 
           </div>
         )}
       </div>
-      <SongLinks song={item.song} className="mt-2.5" />
+      <SongLinks song={item.song} keyOverride={item.key} className="mt-2.5" />
       {editing && (
         <div className="mt-3 grid gap-2 border-t border-white/5 pt-3 sm:grid-cols-[1fr_2fr_auto]">
           <input className="input" placeholder="Tono" value={key} onChange={(e) => setKey(e.target.value)} />

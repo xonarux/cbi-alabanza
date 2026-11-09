@@ -8,8 +8,8 @@ import type { Song } from '../lib/types'
 import { Field, PageHeader, Spinner } from '../components/ui'
 
 const SAMPLE: Song[] = [
-  { id: '1', category: 'alabanza', title: 'Alaba', artist: 'Elevation Worship', original_key: 'G', voice: 'Hombre', variant_key: null, genre: null, youtube_url: 'https://www.youtube.com/watch?v=UhwE_NDKR4Y', spotify_url: null, lyrics_url: null, chords_url: null, track_url: 'https://drive.google.com/…' },
-  { id: '2', category: 'adoracion', title: '10000 razones', artist: 'David Scarpeta', original_key: 'G', voice: 'Hombre', variant_key: null, genre: null, youtube_url: 'https://www.youtube.com/watch?v=buhPIURovhw', spotify_url: null, lyrics_url: null, chords_url: null, track_url: null },
+  { id: '1', category: 'alabanza', title: 'Alaba', artist: 'Elevation Worship', original_key: 'G', voice: 'Hombre', variant_key: null, genre: null, youtube_url: 'https://www.youtube.com/watch?v=UhwE_NDKR4Y', spotify_url: null, lyrics_url: null, lyrics: null, chords_url: null, track_url: 'https://drive.google.com/…' },
+  { id: '2', category: 'adoracion', title: '10000 razones', artist: 'David Scarpeta', original_key: 'G', voice: 'Hombre', variant_key: null, genre: null, youtube_url: 'https://www.youtube.com/watch?v=buhPIURovhw', spotify_url: null, lyrics_url: null, lyrics: null, chords_url: null, track_url: null },
 ]
 
 export default function SettingsPage() {
