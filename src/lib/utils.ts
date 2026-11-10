@@ -32,6 +32,12 @@ export function nextSaturdayISO() {
 
 export const cx = (...c: (string | false | null | undefined)[]) => c.filter(Boolean).join(' ')
 
+/**
+ * Quita caracteres invisibles que llegan al copiar de páginas web (espacio de ancho cero,
+ * guion suave, marcas de dirección…) y convierte los espacios especiales en espacios normales.
+ */
+export const stripHidden = (s: string) => s.replace(/\p{Cf}/gu, '').replace(/[  -   　]/g, ' ')
+
 export const initials = (name?: string | null) =>
   (name ?? '?')
     .split(/\s+/)

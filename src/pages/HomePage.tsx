@@ -6,6 +6,7 @@ import { useMembers } from '../lib/data'
 import { supabase } from '../lib/supabase'
 import type { Devotional, Fast, Rest, Setlist } from '../lib/types'
 import { cx, fmt, isToday, MONTHS, todayISO } from '../lib/utils'
+import { verseOfDay } from '../lib/verses'
 import { Logo } from '../components/ui'
 
 interface HomeData {
@@ -46,6 +47,7 @@ export default function HomePage() {
   const hour = new Date().getHours()
   const greet = hour < 12 ? 'Buenos días' : hour < 19 ? 'Buenas tardes' : 'Buenas noches'
   const mine = (id?: string | null) => !!id && id === profile?.member_id
+  const verse = verseOfDay()
 
   return (
     <>
@@ -58,7 +60,9 @@ export default function HomePage() {
           <h1 className="mt-1 text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
             {profile?.full_name?.split(' ')[0]}, <span className="text-gradient">aquí hay un lugar para ti</span>
           </h1>
-          <p className="mt-2 max-w-xl text-mist/80">"Alabad a Dios en su santuario; alabadle en la magnificencia de su firmamento." — Salmo 150:1</p>
+          <p className="mt-2 max-w-xl text-mist/80">
+            “{verse.text}” <span className="whitespace-nowrap">— {verse.ref} <span className="text-xs text-mist/50">NTV</span></span>
+          </p>
         </div>
       </section>
 

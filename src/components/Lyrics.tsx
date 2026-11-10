@@ -1,7 +1,7 @@
 import { useRef, useState, type ReactNode } from 'react'
 import { Eye, Minus, Pencil, Plus } from 'lucide-react'
 import type { Song } from '../lib/types'
-import { cx } from '../lib/utils'
+import { cx, stripHidden } from '../lib/utils'
 import { Modal } from './ui'
 
 export interface LyricsSection {
@@ -38,7 +38,7 @@ export function parseLyrics(text: string, { keepSpacing = false } = {}): LyricsS
     if (current.label || current.stanzas.length) sections.push(current)
   }
 
-  for (const raw of text.replace(/\r\n?/g, '\n').split('\n')) {
+  for (const raw of stripHidden(text).replace(/\r\n?/g, '\n').split('\n')) {
     const line = raw.trimEnd()
     const header = line.match(BRACKET)?.[1] ?? line.match(BARE)?.[1]
     if (header) {

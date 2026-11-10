@@ -5,6 +5,7 @@ import { useAuth } from '../lib/auth'
 import { run, useTable } from '../lib/data'
 import { supabase } from '../lib/supabase'
 import type { Song, SongCategory } from '../lib/types'
+import { stripHidden } from '../lib/utils'
 import { DeleteButton, Empty, Field, FormActions, Modal, PageHeader, Spinner, Tabs } from '../components/ui'
 import SongCard from '../components/SongCard'
 import { LyricsEditor } from '../components/Lyrics'
@@ -134,7 +135,10 @@ export function SongForm({ draft, onClose, onSaved }: { draft: Partial<Song>; on
     e.preventDefault()
     setSaving(true)
     // En los acordes se conserva la sangría (alinea los acordes con la letra)
-    const clean = (k: string, v: string) => (k === 'chords' ? v.replace(/^(?:[ \t]*\r?\n)+/, '').trimEnd() : v.trim())
+    const clean = (k: string, raw: string) => {
+      const v = stripHidden(raw)
+      return k === 'chords' ? v.replace(/^(?:[ \t]*\r?\n)+/, '').trimEnd() : v.trim()
+    }
     const row = Object.fromEntries(Object.entries(f).map(([k, v]) => [k, v.trim() === '' ? null : clean(k, v)])) as Partial<Song>
     const ok = await run(draft.id ? supabase.from('songs').update(row).eq('id', draft.id) : supabase.from('songs').insert(row), 'Canción guardada')
     setSaving(false)
