@@ -72,6 +72,7 @@ export interface Song {
   spotify_url: string | null
   lyrics_url: string | null
   lyrics: string | null
+  chords: string | null
   chords_url: string | null
   track_url: string | null
 }

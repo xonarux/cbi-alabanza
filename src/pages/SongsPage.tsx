@@ -8,6 +8,7 @@ import type { Song, SongCategory } from '../lib/types'
 import { DeleteButton, Empty, Field, FormActions, Modal, PageHeader, Spinner, Tabs } from '../components/ui'
 import SongCard from '../components/SongCard'
 import { LyricsEditor } from '../components/Lyrics'
+import { ChordsEditor } from '../components/Chords'
 import WeekendSetlist from '../components/WeekendSetlist'
 
 type Tab = SongCategory | 'finde'
@@ -122,6 +123,7 @@ export function SongForm({ draft, onClose, onSaved }: { draft: Partial<Song>; on
     spotify_url: draft.spotify_url ?? '',
     lyrics_url: draft.lyrics_url ?? '',
     lyrics: draft.lyrics ?? '',
+    chords: draft.chords ?? '',
     chords_url: draft.chords_url ?? '',
     track_url: draft.track_url ?? '',
   })
@@ -131,7 +133,9 @@ export function SongForm({ draft, onClose, onSaved }: { draft: Partial<Song>; on
   const submit = async (e: FormEvent) => {
     e.preventDefault()
     setSaving(true)
-    const row = Object.fromEntries(Object.entries(f).map(([k, v]) => [k, typeof v === 'string' && v.trim() === '' ? null : v.trim()])) as Partial<Song>
+    // En los acordes se conserva la sangría (alinea los acordes con la letra)
+    const clean = (k: string, v: string) => (k === 'chords' ? v.replace(/^(?:[ \t]*\r?\n)+/, '').trimEnd() : v.trim())
+    const row = Object.fromEntries(Object.entries(f).map(([k, v]) => [k, v.trim() === '' ? null : clean(k, v)])) as Partial<Song>
     const ok = await run(draft.id ? supabase.from('songs').update(row).eq('id', draft.id) : supabase.from('songs').insert(row), 'Canción guardada')
     setSaving(false)
     if (ok) {
@@ -192,6 +196,10 @@ export function SongForm({ draft, onClose, onSaved }: { draft: Partial<Song>; on
         <div className="sm:col-span-2">
           <span className="label">Letra</span>
           <LyricsEditor value={f.lyrics} onChange={(v) => setF({ ...f, lyrics: v })} />
+        </div>
+        <div className="sm:col-span-2">
+          <span className="label">Acordes</span>
+          <ChordsEditor value={f.chords} onChange={(v) => setF({ ...f, chords: v })} lyrics={f.lyrics} />
         </div>
         <div className="sm:col-span-2">
           <FormActions onCancel={onClose} saving={saving} />

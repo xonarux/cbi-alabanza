@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useRef, useState, type ReactNode } from 'react'
 import { Eye, Minus, Pencil, Plus } from 'lucide-react'
 import type { Song } from '../lib/types'
 import { cx } from '../lib/utils'
@@ -20,8 +20,11 @@ const BARE = /^\s*((?:intro|verso|estrofa|pre-?\s?coro|coro|puente|interludio|in
 
 const tidy = (s: string) => s.charAt(0).toUpperCase() + s.slice(1).toLowerCase()
 
-/** Convierte el texto plano de la letra en secciones y estrofas */
-export function parseLyrics(text: string): LyricsSection[] {
+/**
+ * Convierte el texto plano de la letra en secciones y estrofas.
+ * Con keepSpacing se conserva la sangría (necesaria para alinear acordes).
+ */
+export function parseLyrics(text: string, { keepSpacing = false } = {}): LyricsSection[] {
   const sections: LyricsSection[] = []
   let current: LyricsSection = { label: null, stanzas: [] }
   let stanza: string[] = []
@@ -44,7 +47,7 @@ export function parseLyrics(text: string): LyricsSection[] {
     } else if (!line.trim()) {
       closeStanza()
     } else {
-      stanza.push(line.trim())
+      stanza.push(keepSpacing ? line : line.trim())
     }
   }
   closeSection()
@@ -60,7 +63,7 @@ export function parseLyrics(text: string): LyricsSection[] {
 }
 
 /** Color de la etiqueta según el tipo de sección */
-function tone(label: string) {
+export function tone(label: string) {
   const l = label.toLowerCase()
   if (l.startsWith('pre')) return 'border-violet-300/30 bg-violet-300/10 text-violet-200'
   if (l.startsWith('coro')) return 'border-gold/40 bg-gold/15 text-gold'
@@ -133,8 +136,28 @@ export function LyricsModal({ song, keyOverride, onClose }: { song: Song; keyOve
   )
 }
 
-/** Editor de letra con botones para insertar secciones y vista previa */
-export function LyricsEditor({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+const LYRICS_HELP = 'Marca cada parte con [Verso], [Coro], [Puente]… y deja una línea en blanco entre estrofas. Para repetir el coro basta con escribir [Coro] otra vez.'
+const LYRICS_PLACEHOLDER = '[Verso 1]\nPrimera línea…\nSegunda línea…\n\n[Coro]\nLínea del coro…'
+
+/** Editor con botones para insertar secciones y vista previa (letra o acordes) */
+export function LyricsEditor({
+  value,
+  onChange,
+  placeholder = LYRICS_PLACEHOLDER,
+  help = LYRICS_HELP,
+  renderPreview,
+  noWrap = false,
+  extra,
+}: {
+  value: string
+  onChange: (v: string) => void
+  placeholder?: string
+  help?: ReactNode
+  renderPreview?: (v: string) => ReactNode
+  /** No partir las líneas largas (para conservar la alineación de acordes) */
+  noWrap?: boolean
+  extra?: ReactNode
+}) {
   const ref = useRef<HTMLTextAreaElement>(null)
   const [preview, setPreview] = useState(false)
 
@@ -168,18 +191,20 @@ export function LyricsEditor({ value, onChange }: { value: string; onChange: (v:
       </div>
       {preview ? (
         <div className="max-h-96 overflow-y-auto rounded-xl border border-white/10 bg-white/[0.03] p-4">
-          <LyricsView text={value} size={0.9} />
+          {renderPreview ? renderPreview(value) : <LyricsView text={value} size={0.9} />}
         </div>
       ) : (
         <textarea
           ref={ref}
-          className="input min-h-64 font-mono text-sm leading-relaxed"
+          className={cx('input min-h-64 font-mono text-sm leading-relaxed', noWrap && 'whitespace-pre')}
+          wrap={noWrap ? 'off' : undefined}
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          placeholder={'[Verso 1]\nPrimera línea…\nSegunda línea…\n\n[Coro]\nLínea del coro…'}
+          placeholder={placeholder}
         />
       )}
-      <p className="mt-1.5 text-xs text-mist/60">Marca cada parte con [Verso], [Coro], [Puente]… y deja una línea en blanco entre estrofas. Para repetir el coro basta con escribir [Coro] otra vez.</p>
+      {extra}
+      <p className="mt-1.5 text-xs text-mist/60">{help}</p>
     </div>
   )
 }
